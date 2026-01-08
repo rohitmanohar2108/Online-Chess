@@ -60,6 +60,12 @@ const renderBoard = () => {
       boardElement.appendChild(squareElement);
     });
   });
+
+  if(playerRole == 'b'){
+    boardElement.classList.add("flipped");
+  }else{
+    boardElement.classList.remove("flipped");
+  }
 };
 
 const handleMove = (source, target) => {
@@ -68,24 +74,21 @@ const handleMove = (source, target) => {
     to: `${String.fromCharCode(97 + target.column)}${8 - target.row}`,
     promotion: "q",
   };
+  socket.emit("move", move);
 };
+
+const UNICODE_PIECES = {
+  w: { k: "♔", q: "♕", r: "♖", b: "♗", n: "♘", p: "♙" },
+  b: { k: "♚", q: "♛", r: "♜", b: "♝", n: "♞", p: "♟" },
+};
+
 const getPieceUnicode = (piece) => {
-  const unicodePieces = {
-    K: "♔", // King
-    Q: "♕", // Queen
-    R: "♖", // Rook
-    B: "♗", // Bishop
-    N: "♘", // Knight
-    P: "♙", // Pawn
-    k: "♚", // King
-    q: "♛", // Queen
-    r: "♜", // Rook
-    b: "♝", // Bishop
-    n: "♞", // Knight
-    p: "♟", // Pawn
-  };
-  return unicodePieces[piece.type] || "";
+  if (!piece) return "";
+  return UNICODE_PIECES[piece.color][piece.type];
 };
+
+
+
 
 socket.on("playerRole", function (role) {
   playerRole = role;
