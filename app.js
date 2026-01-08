@@ -20,12 +20,7 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", function (uniquesocket) {
-    console.log("User connected")
-
-    uniquesocket.on("disconnected", function(){
-        console.log("disconnected");
-    });
-
+    console.log("User connected");
 });
 
 server.listen(3000, function ()  {
