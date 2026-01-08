@@ -26,21 +26,59 @@ const renderBoard = () => {
           "piece",
           square.color == "w" ? "white" : "black"
         );
-        pieceElement.innerText = "";
+
+        pieceElement.innerText = getPieceUnicode(square);
         pieceElement.draggable = playerRole == square.color;
 
-        pieceElement.addEventListener("dragstart", () => {
+        pieceElement.addEventListener("dragstart", (e) => {
           if (pieceElement.draggable) {
             draggedPiece = pieceElement;
             sourceSquare = { row: rowIndex, column: squareIndex };
+            e.dataTransfer.setData("text/plain", "");
           }
         });
+        pieceElement.addEventListener("dragend", (e) => {
+          draggedPiece = null;
+          sourceSquare = null;
+        });
+        squareElement.appendChild(pieceElement);
       }
+      squareElement.addEventListener("dragover", function (e) {
+        e.preventDefault();
+      });
+
+      squareElement.addEventListener("drop", function (e) {
+        e.preventDefault();
+        if (draggedPiece) {
+          const targetSource = {
+            row: parseInt(squareElement.dataset.row),
+            column: parseInt(squareElement.dataset.column),
+          };
+          handleMove(sourceSquare, targetSource);
+        }
+      });
+      boardElement.appendChild(squareElement);
     });
   });
 };
 
 const handleMove = () => {};
-const getPieceUnicode = () => {};
+const getPieceUnicode = (piece) => {
+  const unicodePieces = {
+    K: "♔", // King
+    Q: "♕", // Queen
+    R: "♖", // Rook
+    B: "♗", // Bishop
+    N: "♘", // Knight
+    P: "♙", // Pawn
+    k: "♚", // King
+    q: "♛", // Queen
+    r: "♜", // Rook
+    b: "♝", // Bishop
+    n: "♞", // Knight
+    p: "♟", // Pawn
+  };
+  return unicodePieces[piece.type] || "";
+};
 
 renderBoard();
