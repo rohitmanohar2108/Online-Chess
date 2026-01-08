@@ -62,7 +62,13 @@ const renderBoard = () => {
   });
 };
 
-const handleMove = () => {};
+const handleMove = (source, target) => {
+  const move = {
+    from: `${String.fromCharCode(97 + source.column)}${8 - source.row}`,
+    to: `${String.fromCharCode(97 + target.column)}${8 - target.row}`,
+    promotion: "q",
+  };
+};
 const getPieceUnicode = (piece) => {
   const unicodePieces = {
     K: "♔", // King
@@ -80,5 +86,25 @@ const getPieceUnicode = (piece) => {
   };
   return unicodePieces[piece.type] || "";
 };
+
+socket.on("playerRole", function (role) {
+  playerRole = role;
+  renderBoard();
+});
+
+socket.on("spectatorRole", function () {
+  playerRole = null;
+  renderBoard();
+});
+
+socket.on("boardState", function (fen) {
+  chess.load(fen);
+  renderBoard();
+});
+
+socket.on("move", function (move) {
+  chess.move(move);
+  renderBoard();
+});
 
 renderBoard();
